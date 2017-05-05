@@ -65,6 +65,20 @@ class HTMLParser
     }
 
     /**
+     * @param string $tagName
+     *
+     * @return array
+     */
+    public function getElementByTagName(string $tagName)
+    {
+        $elementList = [];
+        foreach ($this->document->getElementsByTagName($tagName) as $childElement) {
+            $elementList[] = new HTMLElement($childElement);
+        }
+        return $elementList;
+    }
+
+    /**
      * @param string $elementName
      * @param string $attributeName
      * @param string $attributeValue
