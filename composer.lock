@@ -1,0 +1,59 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "This file is @generated automatically"
+    ],
+    "hash": "4ceb75a6c93c0cd84b085739deb8efe2",
+    "content-hash": "5366ff230219d18007b05a7649e44db3",
+    "packages": [
+        {
+            "name": "gm314/common",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/gperler/common.git",
+                "reference": "9bc585f4832c5375010ff4bd2bc469766dd12524"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/gperler/common/zipball/9bc585f4832c5375010ff4bd2bc469766dd12524",
+                "reference": "9bc585f4832c5375010ff4bd2bc469766dd12524",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.0.0"
+            },
+            "require-dev": {
+                "codeception/codeception": "*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Civis\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Gregor Müller"
+                }
+            ],
+            "description": "common",
+            "time": "2017-03-02 10:51:16"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "dev",
+    "stability-flags": [],
+    "prefer-stable": true,
+    "prefer-lowest": false,
+    "platform": {
+        "php": ">=7.0.0"
+    },
+    "platform-dev": []
+}

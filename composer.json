@@ -1,0 +1,22 @@
+{
+  "name": "gm314/Diavazo",
+  "description": "PHP 7 HTML Parser",
+  "license": "MIT",
+  "autoload-dev": {
+    "psr-4": {
+      "": "src/"
+    }
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "require": {
+    "php": ">=7.0.0",
+    "gm314/common": "master"
+  },
+  "authors": [
+    {
+      "name": "Gregor Müller",
+      "email": "email@example.com"
+    }
+  ]
+}
