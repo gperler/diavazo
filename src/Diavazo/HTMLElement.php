@@ -41,6 +41,16 @@ class HTMLElement
     }
 
     /**
+     * @param string $dataName
+     *
+     * @return null|string
+     */
+    public function getData(string $dataName)
+    {
+        return $this->getAttributeValue('data-' . $dataName);
+    }
+
+    /**
      * @param string $className
      *
      * @return bool
@@ -287,36 +297,68 @@ class HTMLElement
         return $descendantList;
     }
 
-
-    public function getOuterHTML() {
+    /**
+     * @return string
+     */
+    public function getOuterHTML()
+    {
         if ($this->domElement->childNodes->length === 0) {
-
+            return $this->getOpeningTag(true);
         }
-
-
-        $outerHTML = $this->getOpeningTag();
+        $html = $this->getOpeningTag();
+        $html .= $this->getInnerHTML();
+        $html .= $this->getClosingTag();
+        return $html;
     }
 
-    public function getInnerHTML() {
-
+    /**
+     * @return string
+     */
+    public function getInnerHTML()
+    {
+        $html = '';
+        foreach ($this->domElement->childNodes as $childNode) {
+            if ($childNode->nodeType === XML_ELEMENT_NODE) {
+                $htmlElement = new HTMLElement($childNode);
+                $html .= $htmlElement->getOuterHTML();
+            }
+            if ($childNode->nodeType === XML_TEXT_NODE) {
+                $html .= $childNode->nodeValue;
+            }
+            if ($childNode->nodeType === XML_COMMENT_NODE) {
+                $html .= '<!--' . $childNode->nodeValue . '-->';
+            }
+        }
+        return $html;
     }
 
-    public function getOpeningTag() {
+    /**
+     * @param bool $immediateClose
+     *
+     * @return string
+     */
+    public function getOpeningTag($immediateClose = false)
+    {
         $tag = '<' . $this->getTagName();
-        foreach($this->domElement->attributes as $attribute) {
-            $tag .= ' ' .$attribute->nodeName . '"' . $attribute->nodeValue . '"';
+        foreach ($this->domElement->attributes as $attribute) {
+            $tag .= ' ' . $attribute->nodeName . '"' . $attribute->nodeValue . '"';
         }
-        return $tag .= '>';
+        return $tag .= ($immediateClose) ? '/>' : '>';
     }
 
-    public function getClosingTag() {
+    /**
+     * @return string
+     */
+    public function getClosingTag()
+    {
         return '</' . $this->getTagName() . '>';
     }
 
     /**
      * @return \DOMElement
      */
-    public function getDomElement() : \DOMElement{
+    public function getDomElement(): \DOMElement
+    {
         return $this->domElement;
     }
 
