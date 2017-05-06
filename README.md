@@ -1,8 +1,15 @@
 # Diavazo PHP7 HTML Parser
 
-Diavazo is a wrapper arround \DOMDocument and \DOMElement. It adds some useful functionality to search 
-within descendants or query by classes.
+Diavazo is a wrapper arround <code>\DOMDocument</code> and <code>\DOMElement</code>. It adds some useful functionality 
+to search within descendants or query by classes. The <code>HTMLDocument</code> class allows to either load a string or a 
+file or url. Some basic search methods are available as well. 
 
+For example the method <code>getElement("p .spanClass b.bClass")</code> allows to search for elements, classes 
+and a combination of both. The example will find all <code>&lt;p&gt;</code> elements, all elements
+with a the class <code>spanClass</code> as well as all <code>&lt;b class="bClass"&gt;</code>.
+
+The result of these searches are an array of <code>HTMLElement</code> objects. These again allow to query with the difference
+that searches are only applied the their descendant elements.
 
 # Usage
 ````php
@@ -41,6 +48,13 @@ $root = $document->getRootElement();
 
 
 # HTMLElement descendants methods
+The HTML Element is result of queries like <code>getElementById</code>. Further search methods can 
+be applied on the element. They will search within all descendants. 
+
+The method <code>getDescendantByName("td th")</code> allows to search for several tags. 
+
+
+
 ````php
 $document = new HTMLDocument();
 $document->loadFile(__DIR__ . "/assets/TableToArrayTest.html");
@@ -124,8 +138,8 @@ $array = [
 
 # Table 2 Array using an extractor
 The following examples show how to register an extractor. The closure will be invoked
-with the table data cell (<td>) and is expected to return the value that will be added to the array.
-The following example gets the first <a> element and extracts the href attribute
+with the table data cell (<code>&lt;td&gt;</code>) and is expected to return the value that will be added to the array.
+The following example gets the first <code>&lt;a&gt;</code> element and extracts the href attribute
 
 ````php
 $document = $this->getDocument();
