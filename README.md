@@ -8,8 +8,8 @@ For example the method <code>getElement("p .spanClass b.bClass")</code> allows t
 and a combination of both. The example will find all <code>&lt;p&gt;</code> elements, all elements
 with a the class <code>spanClass</code> as well as all <code>&lt;b class="bClass"&gt;</code>.
 
-The result of these searches are an array of <code>HTMLElement</code> objects. These again allow to query with the difference
-that searches are only applied the their descendant elements.
+The result of these searches are an array of <code>HTMLElement</code> objects. These again allow to query, with the difference
+that searches are only applied to the their direct descendants.
 
 # Installation
 
