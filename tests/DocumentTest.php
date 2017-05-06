@@ -29,5 +29,9 @@ class DocumentTest extends TestCase
 
         $meta = $document->getElementWithAttributeValue("meta", "charset", "UTF-8");
         $this->assertCount(1, $meta);
+
+        $elementList = $document->getElement("p .spanClass b.bClass");
+        $this->assertCount(3, $elementList);
+
     }
 }

@@ -225,13 +225,19 @@ class HTMLElement
     }
 
     /**
-     * @param string $tagList
+     * @param string $tags
      *
      * @return bool
      */
-    public function isOneOfTags(string $tagList): bool
+    public function isOneOfTags(string $tags): bool
     {
-        return strpos($tagList, $this->getTagName()) !== false;
+        $tagList = explode(" ", $tags);
+        foreach ($tagList as $tag) {
+            if ($tag === $this->getTagName()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -305,7 +311,7 @@ class HTMLElement
      *
      * @return HTMLElement[]
      */
-    public function getElement(string $queryString) : array
+    public function getElement(string $queryString): array
     {
         $resultList = [];
 
