@@ -440,4 +440,15 @@ class HTMLElement
         return $resultList;
     }
 
+    /**
+     * @param string $xpath
+     *
+     * @return mixed
+     */
+    public function evaluate(string $xpath)
+    {
+        $xpathObject = new \DOMXPath($this->domDocument);
+        return $xpathObject->evaluate($xpath, $this->domElement);
+    }
+
 }

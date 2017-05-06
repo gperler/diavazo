@@ -105,7 +105,17 @@ class HTMLDocument
             $resultList[] = new HTMLElement($this->domDocument, $childNode);
         }
         return $resultList;
+    }
 
+    /**
+     * @param string $xpath
+     *
+     * @return mixed
+     */
+    public function evaluate(string $xpath)
+    {
+        $xpathObject = new \DOMXPath($this->domDocument);
+        return $xpathObject->evaluate($xpath);
     }
 
 }
