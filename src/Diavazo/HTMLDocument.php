@@ -65,11 +65,19 @@ class HTMLDocument
      */
     public function getElementByTagName(string $tagName)
     {
-        $elementList = [];
-        foreach ($this->domDocument->getElementsByTagName($tagName) as $childElement) {
-            $elementList[] = new HTMLElement($this->domDocument, $childElement);
-        }
-        return $elementList;
+        $root = $this->getRootElement();
+        return $root->getDescendantByName($tagName);
+    }
+
+    /**
+     * @param string $queryString allows combination of "tagName .className tagName.className"
+     *
+     * @return HTMLElement[]
+     */
+    public function getElement(string $queryString): array
+    {
+        $root = $this->getRootElement();
+        return $root->getElement($queryString);
     }
 
     /**
@@ -116,6 +124,14 @@ class HTMLDocument
     {
         $xpathObject = new \DOMXPath($this->domDocument);
         return $xpathObject->evaluate($xpath);
+    }
+
+    /**
+     * @return \DOMDocument
+     */
+    public function getDOMDocument(): \DOMDocument
+    {
+        return $this->domDocument;
     }
 
 }

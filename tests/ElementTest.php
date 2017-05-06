@@ -98,6 +98,13 @@ class ElementTest extends TestCase
 
     }
 
+    public function testMultipleTag() {
+        $document = $this->getDocument();
+        $elementList = $document->getElementByTagName("p span");
+        $this->assertCount(4, $elementList);
+
+    }
+
 
     public function testXPath() {
         $document = $this->getDocument();
@@ -113,7 +120,9 @@ class ElementTest extends TestCase
 
     }
 
-    public function testHTML() {
+
+
+    public function testOuterHTML() {
         $document = $this->getDocument();
         $div = $document->getElementById("testOuterHTML");
 

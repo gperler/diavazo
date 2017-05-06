@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Diavazo;
 
+use Civis\Common\StringUtil;
+
 class HTMLElement
 {
 
@@ -229,13 +231,7 @@ class HTMLElement
      */
     public function isOneOfTags(string $tagList): bool
     {
-        $tagList = explode(" ", $tagList);
-        foreach ($tagList as $tag) {
-            if ($tag === $this->getTagName()) {
-                return true;
-            }
-        }
-        return false;
+        return strpos($tagList, $this->getTagName()) !== false;
     }
 
     /**
@@ -302,6 +298,32 @@ class HTMLElement
             $elementList = array_merge($elementList, $current->getChildElementList());
         }
         return null;
+    }
+
+    /**
+     * @param string $queryString allows combination of "tagName .className tagName.className"
+     *
+     * @return HTMLElement[]
+     */
+    public function getElement(string $queryString) : array
+    {
+        $resultList = [];
+
+        $queryList = explode(" ", $queryString);
+        foreach ($queryList as $query) {
+            if (StringUtil::startsWith($query, ".")) {
+                $className = trim($query, ".");
+                $resultList = array_merge($resultList, $this->getDescendantWithClassName($className));
+                continue;
+            }
+            if (strpos($query, ".") === false) {
+                $resultList = array_merge($resultList, $this->getDescendantByName($query));
+                continue;
+            }
+            $elementClass = explode(".", $query);
+            $resultList = array_merge($resultList, $this->getDescendantWithClassName($elementClass[1], $elementClass[0]));
+        }
+        return $resultList;
     }
 
     /**
