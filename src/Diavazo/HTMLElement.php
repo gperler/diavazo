@@ -54,11 +54,11 @@ class HTMLElement
      */
     public function hasClass(string $className): bool
     {
-        $classNameOnElement = $this->getClass();
-        if ($classNameOnElement === null) {
+        $elementClassName = $this->getClass();
+        if ($elementClassName === null) {
             return false;
         }
-        return strpos($classNameOnElement, $className) !== false;
+        return in_array($className, explode(" ", $this->getClass()));
     }
 
     /**
@@ -231,13 +231,7 @@ class HTMLElement
      */
     public function isOneOfTags(string $tags): bool
     {
-        $tagList = explode(" ", $tags);
-        foreach ($tagList as $tag) {
-            if ($tag === $this->getTagName()) {
-                return true;
-            }
-        }
-        return false;
+        return in_array($this->getTagName(), explode(" ", $tags));
     }
 
     /**
@@ -319,17 +313,40 @@ class HTMLElement
         foreach ($queryList as $query) {
             if (StringUtil::startsWith($query, ".")) {
                 $className = trim($query, ".");
-                $resultList = array_merge($resultList, $this->getDescendantWithClassName($className));
+                $resultList = $this->addUniqueHTMLElementToArray($resultList, $this->getDescendantWithClassName($className));
                 continue;
             }
             if (strpos($query, ".") === false) {
-                $resultList = array_merge($resultList, $this->getDescendantByName($query));
+                $resultList = $this->addUniqueHTMLElementToArray($resultList, $this->getDescendantByName($query));
                 continue;
             }
             $elementClass = explode(".", $query);
-            $resultList = array_merge($resultList, $this->getDescendantWithClassName($elementClass[1], $elementClass[0]));
+            $resultList = $this->addUniqueHTMLElementToArray($resultList, $this->getDescendantWithClassName($elementClass[1], $elementClass[0]));
         }
         return $resultList;
+    }
+
+    /**
+     * @param HTMLElement[] $uniqueList
+     * @param HTMLElement[] $newElements
+     *
+     * @return HTMLElement[]
+     */
+    private function addUniqueHTMLElementToArray(array $uniqueList, array $newElements)
+    {
+        foreach ($newElements as $newElement) {
+            $alreadyInList = false;
+            foreach ($uniqueList as $unique) {
+                if ($newElement->isSameNode($unique)) {
+                    $alreadyInList = true;
+                    break;
+                }
+            }
+            if (!$alreadyInList) {
+                $uniqueList[] = $newElement;
+            }
+        }
+        return $uniqueList;
     }
 
     /**
@@ -477,6 +494,16 @@ class HTMLElement
     {
         $xpathObject = new \DOMXPath($this->domDocument);
         return $xpathObject->evaluate($xpath, $this->domElement);
+    }
+
+    /**
+     * @param HTMLElement $other
+     *
+     * @return bool
+     */
+    public function isSameNode(HTMLElement $other): bool
+    {
+        return $this->domElement->isSameNode($other->getDomElement());
     }
 
 }
