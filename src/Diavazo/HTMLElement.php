@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace Diavazo;
 
-use Civis\Common\StringUtil;
-
 class HTMLElement
 {
+
+    /**
+     * @var \DOMDocument
+     */
+    private $domDocument;
 
     /**
      * @var \DOMElement
@@ -17,10 +20,12 @@ class HTMLElement
     /**
      * HTMLElement constructor.
      *
+     * @param \DOMDocument $domDocument
      * @param \DOMElement $domElement
      */
-    public function __construct(\DOMElement $domElement)
+    public function __construct(\DOMDocument $domDocument, \DOMElement $domElement)
     {
+        $this->domDocument = $domDocument;
         $this->domElement = $domElement;
     }
 
@@ -38,16 +43,6 @@ class HTMLElement
     public function getClass()
     {
         return $this->getAttributeValue("class");
-    }
-
-    /**
-     * @param string $dataName
-     *
-     * @return null|string
-     */
-    public function getData(string $dataName)
-    {
-        return $this->getAttributeValue('data-' . $dataName);
     }
 
     /**
@@ -75,14 +70,66 @@ class HTMLElement
     }
 
     /**
+     * @param string $dataName
+     *
+     * @return null|string
+     */
+    public function getData(string $dataName)
+    {
+        return $this->getAttributeValue("data-" . $dataName);
+    }
+
+    /**
+     * @param string $dataName
+     *
+     * @return bool
+     */
+    public function getDataAsBoolean(string $dataName)
+    {
+        return $this->getAttributeValueAsBoolean("data-" . $dataName);
+    }
+
+    /**
+     * @param $dataName
+     *
+     * @return int
+     */
+    public function getDataAsInt(string $dataName)
+    {
+        return $this->getAttributeValueAsInt("data-" . $dataName);
+    }
+
+    /**
+     * @param string $dataName
+     *
+     * @return float
+     */
+    public function getDataAsFloat(string $dataName)
+    {
+        return $this->getAttributeValueAsFloat("data-" . $dataName);
+    }
+
+    /**
+     * @param string $attributeName
+     *
+     * @return bool
+     */
+    public function hasAttribute(string $attributeName)
+    {
+        return $this->domElement->hasAttribute($attributeName);
+    }
+
+    /**
      * @param string $attributeName
      *
      * @return null|string
      */
     public function getAttributeValue(string $attributeName)
     {
-        $value = $this->domElement->getAttribute($attributeName);
-        return StringUtil::trimToNull($value);
+        if (!$this->domElement->hasAttribute($attributeName)) {
+            return null;
+        }
+        return $this->domElement->getAttribute($attributeName);
     }
 
     /**
@@ -92,6 +139,10 @@ class HTMLElement
      */
     public function getAttributeValueAsBoolean(string $attributeName): bool
     {
+        $value = $this->getAttributeValue($attributeName);
+        if ($value === 'false' || $value = "0") {
+            return false;
+        }
         return !!$this->getAttributeValue($attributeName);
     }
 
@@ -103,10 +154,7 @@ class HTMLElement
     public function getAttributeValueAsInt(string $attributeName)
     {
         $value = $this->getAttributeValue($attributeName);
-        if ($value === null) {
-            return null;
-        }
-        return intval($value);
+        return $value === null ?: intval($value);
     }
 
     /**
@@ -141,7 +189,7 @@ class HTMLElement
      */
     public function getInnerText()
     {
-        return StringUtil::trimToNull($this->domElement->textContent);
+        return $this->domElement->textContent;
     }
 
     /**
@@ -150,10 +198,7 @@ class HTMLElement
     public function getInnerTextAsInt()
     {
         $innerText = $this->getInnerText();
-        if ($innerText === null) {
-            return null;
-        }
-        return intval($innerText);
+        return $innerText === null ?: intval($innerText);
     }
 
     /**
@@ -178,6 +223,22 @@ class HTMLElement
     }
 
     /**
+     * @param string $tagList
+     *
+     * @return bool
+     */
+    public function isOneOfTags(string $tagList): bool
+    {
+        $tagList = explode(" ", $tagList);
+        foreach ($tagList as $tag) {
+            if ($tag === $this->getTagName()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * @return HTMLElement|null
      */
     public function getFirstChild()
@@ -185,7 +246,7 @@ class HTMLElement
         if ($this->domElement->firstChild === null) {
             return null;
         }
-        return new HTMLElement($this->domElement->firstChild);
+        return new HTMLElement($this->domDocument, $this->domElement->firstChild);
     }
 
     /**
@@ -196,7 +257,7 @@ class HTMLElement
         if (!$this->domElement->previousSibling) {
             return null;
         }
-        return new HTMLElement($this->domElement->previousSibling);
+        return new HTMLElement($this->domDocument, $this->domElement->previousSibling);
     }
 
     /**
@@ -207,7 +268,7 @@ class HTMLElement
         if (!$this->domElement->nextSibling) {
             return null;
         }
-        return new HTMLElement($this->domElement->nextSibling);
+        return new HTMLElement($this->domDocument, $this->domElement->nextSibling);
     }
 
     /**
@@ -218,7 +279,7 @@ class HTMLElement
         $childElementList = [];
         foreach ($this->domElement->childNodes as $childNode) {
             if ($childNode->nodeType === XML_ELEMENT_NODE) {
-                $childElementList[] = new HTMLElement($childNode);
+                $childElementList[] = new HTMLElement($this->domDocument, $childNode);
             }
         }
         return $childElementList;
@@ -253,7 +314,7 @@ class HTMLElement
         $descendantList = [];
         $elementList = $this->getChildElementList();
         foreach ($elementList as $child) {
-            if ($child->getTagName() === $tagName) {
+            if ($child->isOneOfTags($tagName)) {
                 $descendantList[] = $child;
             }
             $descendantList = array_merge($descendantList, $child->getDescendantByName($tagName));
@@ -319,7 +380,7 @@ class HTMLElement
         $html = '';
         foreach ($this->domElement->childNodes as $childNode) {
             if ($childNode->nodeType === XML_ELEMENT_NODE) {
-                $htmlElement = new HTMLElement($childNode);
+                $htmlElement = new HTMLElement($this->domDocument, $childNode);
                 $html .= $htmlElement->getOuterHTML();
             }
             if ($childNode->nodeType === XML_TEXT_NODE) {
@@ -341,7 +402,7 @@ class HTMLElement
     {
         $tag = '<' . $this->getTagName();
         foreach ($this->domElement->attributes as $attribute) {
-            $tag .= ' ' . $attribute->nodeName . '"' . $attribute->nodeValue . '"';
+            $tag .= ' ' . $attribute->nodeName . '="' . $attribute->nodeValue . '"';
         }
         return $tag .= ($immediateClose) ? '/>' : '>';
     }
@@ -360,6 +421,21 @@ class HTMLElement
     public function getDomElement(): \DOMElement
     {
         return $this->domElement;
+    }
+
+    /**
+     * @param string $xpath
+     *
+     * @return array
+     */
+    public function query(string $xpath)
+    {
+        $xpathObject = new \DOMXPath($this->domDocument);
+        $resultList = [];
+        foreach ($xpathObject->query($xpath, $this->domElement) as $childNode) {
+            $resultList[] = new HTMLElement($this->domDocument, $childNode);
+        }
+        return $resultList;
     }
 
 }

@@ -4,26 +4,20 @@ declare(strict_types=1);
 
 namespace Diavazo;
 
-class HTMLParser
+class HTMLDocument
 {
 
     /**
      * @var \DOMDocument
      */
-    private $document;
-
-    /**
-     * @var HTMLElement[]
-     */
-    private $htmlElementList;
+    private $domDocument;
 
     /**
      * HTMLParser constructor.
      */
     public function __construct()
     {
-        $this->document = new \DOMDocument();
-        $this->htmlElementList = [];
+        $this->domDocument = new \DOMDocument();
     }
 
     /**
@@ -31,7 +25,7 @@ class HTMLParser
      */
     public function loadFile(string $fileName)
     {
-        @$this->document->loadHTMLFile($fileName);
+        @$this->domDocument->loadHTMLFile($fileName);
     }
 
     /**
@@ -39,7 +33,7 @@ class HTMLParser
      */
     public function loadString(string $htmlString)
     {
-        @$this->document->loadHTML($htmlString);
+        @$this->domDocument->loadHTML($htmlString);
     }
 
     /**
@@ -47,7 +41,7 @@ class HTMLParser
      */
     public function getRootElement(): HTMLElement
     {
-        return new HTMLElement($this->document->documentElement);
+        return new HTMLElement($this->domDocument, $this->domDocument->documentElement);
     }
 
     /**
@@ -57,23 +51,23 @@ class HTMLParser
      */
     public function getElementById(string $elementId)
     {
-        $domElement = $this->document->getElementById($elementId);
+        $domElement = $this->domDocument->getElementById($elementId);
         if ($domElement === null) {
             return null;
         }
-        return new HTMLElement($domElement);
+        return new HTMLElement($this->domDocument, $domElement);
     }
 
     /**
      * @param string $tagName
      *
-     * @return array
+     * @return HTMLElement[]
      */
     public function getElementByTagName(string $tagName)
     {
         $elementList = [];
-        foreach ($this->document->getElementsByTagName($tagName) as $childElement) {
-            $elementList[] = new HTMLElement($childElement);
+        foreach ($this->domDocument->getElementsByTagName($tagName) as $childElement) {
+            $elementList[] = new HTMLElement($this->domDocument, $childElement);
         }
         return $elementList;
     }
@@ -88,13 +82,30 @@ class HTMLParser
     public function getElementWithAttributeValue(string $elementName, string $attributeName, string $attributeValue)
     {
         $resultList = [];
-        foreach ($this->document->getElementsByTagName($elementName) as $node) {
-            $htmlElement = new HTMLElement($node);
+        foreach ($this->domDocument->getElementsByTagName($elementName) as $node) {
+            $htmlElement = new HTMLElement($this->domDocument, $node);
             if ($htmlElement->hasAttributeValue($attributeName, $attributeValue)) {
                 $resultList[] = $htmlElement;
             }
         }
         return $resultList;
+    }
+
+    /**
+     * @param string $xpath
+     *
+     * @return HTMLElement[]
+     */
+    public function query(string $xpath)
+    {
+        $domXpath = new \DOMXPath($this->domDocument);
+
+        $resultList = [];
+        foreach ($domXpath->query($xpath) as $childNode) {
+            $resultList[] = new HTMLElement($this->domDocument, $childNode);
+        }
+        return $resultList;
+
     }
 
 }

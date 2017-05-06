@@ -13,6 +13,9 @@
     "php": ">=7.0.0",
     "gm314/common": "master"
   },
+  "require-dev": {
+    "phpunit/phpunit": "*"
+  },
   "authors": [
     {
       "name": "Gregor Müller",

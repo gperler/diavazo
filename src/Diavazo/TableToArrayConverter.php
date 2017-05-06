@@ -78,7 +78,11 @@ class TableToArrayConverter
         $keyList = $this->getHeaderArray();
         $tableArray = [];
 
-        foreach ($this->tableElement->getDescendantByName('tr') as $tr) {
+        foreach ($this->tableElement->getDescendantByName('tr') as $rowIndex => $tr) {
+            if ($rowIndex === 0) {
+                continue;
+            }
+
             $rowArray = [];
             foreach ($tr->getDescendantByName('td') as $columnIndex => $td) {
                 $columnName = $keyList[$columnIndex];
@@ -99,7 +103,7 @@ class TableToArrayConverter
 
         foreach ($this->tableElement->getDescendantByName('tr') as $tr) {
             $rowArray = [];
-            foreach ($tr->getDescendantByName('td') as $index => $td) {
+            foreach ($tr->getDescendantByName('td th') as $index => $td) {
                 $extractor = $this->getExtractor($index);
                 $rowArray[] = $extractor($td);
             }
