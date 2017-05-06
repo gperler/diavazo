@@ -50,26 +50,21 @@ $table = $document->getElementById("table");
 // will return the first tr (Breadth-first search)
 $table->getFirstDescendantByName("tr");
 
-// will return all td elements
+// will return all td and th elements
 $tdList = $table->getDescendantByName("td th");
 
-
-$root = $document->getRootElement();
-
 // will find all elements that have the class 'active'
+$root = $document->getRootElement();
 $elementsWithClass = $root->getDescendantWithClassName("active");
 
 // will find all elements that have the class 'myClass' and are td or th elements
 $elementsWithClass = $root->getDescendantWithClassName("myClass", "td th");
-
 
 // will find all elements having only the class 'testClass'
 $elementsWithExactClass = $root->getDescendantWithClassNameStrict("testClass");
 
 // will find all elements having only the class 'testClass' and are td or th elements
 $elementsWithExactClass = $root->getDescendantWithClassNameStrict("testClass", "td th");
-
-
 
 // find all <p> elements, all elements with the class 'spanClass' and all <b class="bClass"> that are descendants of #myId  
 $anyElement = $document-getElementById("myId");
@@ -86,7 +81,6 @@ $table = $document->getElementBy("myTable");
 
 // will return null if the attribute does not exist otherwise string
 $table->getAttributeValue("align");
-
 
 ````
 
@@ -116,6 +110,8 @@ $array = $arrayConverter->getAsAssociativeArray();
     ...
 </table>
 
+will result in:
+
 $array = [
     [
        "Key1" => "Value 1",
@@ -123,8 +119,6 @@ $array = [
     ],
     ...
 ]
-
-
 ````
 
 
@@ -132,7 +126,6 @@ $array = [
 The following examples show how to register an extractor. The closure will be invoked
 with the table data cell (<td>) and is expected to return the value that will be added to the array.
 The following example gets the first <a> element and extracts the href attribute
-
 
 ````php
 $document = $this->getDocument();
