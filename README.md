@@ -11,6 +11,12 @@ with a the class <code>spanClass</code> as well as all <code>&lt;b class="bClass
 The result of these searches are an array of <code>HTMLElement</code> objects. These again allow to query with the difference
 that searches are only applied the their descendant elements.
 
+# Installation
+
+````
+composer require gm314/diavazo
+````
+
 # Usage
 ````php
 use Diavazo\HTMLDocument;
