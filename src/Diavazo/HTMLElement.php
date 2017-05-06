@@ -324,15 +324,16 @@ class HTMLElement
 
     /**
      * @param string $className
+     * @param string|null $tagList
      *
-     * @return HTMLElement[]
+     * @return array
      */
-    public function getDescendantWithClassName(string $className)
+    public function getDescendantWithClassName(string $className, string $tagList = null)
     {
         $descendantList = [];
         $elementList = $this->getChildElementList();
         foreach ($elementList as $child) {
-            if ($child->hasClass($className)) {
+            if ($child->hasClass($className) && ($tagList === null || $child->isOneOfTags($tagList))) {
                 $descendantList[] = $child;
             }
             $descendantList = array_merge($descendantList, $child->getDescendantWithClassName($className));
@@ -342,15 +343,16 @@ class HTMLElement
 
     /**
      * @param string $className
+     * @param string|null $tagList
      *
      * @return array
      */
-    public function getDescendantWithClassNameStrict(string $className)
+    public function getDescendantWithClassNameStrict(string $className, string $tagList = null)
     {
         $descendantList = [];
         $elementList = $this->getChildElementList();
         foreach ($elementList as $child) {
-            if ($child->isClass($className)) {
+            if ($child->isClass($className) && ($tagList === null || $child->isOneOfTags($tagList))) {
                 $descendantList[] = $child;
             }
             $descendantList = array_merge($descendantList, $child->getDescendantWithClassNameStrict($className));

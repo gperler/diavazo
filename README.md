@@ -37,14 +37,46 @@ $root = $document->getRootElement();
 ````
 
 
-# HTMLElement methods
+# HTMLElement descendants methods
 ````php
 $document = new HTMLDocument();
 $document->loadFile(__DIR__ . "/assets/TableToArrayTest.html");
 
-// get root (<html>)
+$table = $document->getElementById("table");
+
+// will return the first tr (Breadth-first search)
+$table->getFirstDescendantByName("tr");
+
+// will return all td elements
+$tdList = $table->getDescendantByName("td th");
+
+
 $root = $document->getRootElement();
 
-$root->
+// will find all elements that have the class 'active'
+$elementsWithClass = $root->getDescendantWithClassName("active");
+
+// will find all elements that have the class 'myClass' and are td or th elements
+$elementsWithClass = $root->getDescendantWithClassName("myClass", "td th");
+
+
+// will find all elements having only the class 'testClass'
+$elementsWithExactClass = $root->getDescendantWithClassNameStrict("testClass");
+
+// will find all elements having only the class 'testClass' and are td or th elements
+$elementsWithExactClass = $root->getDescendantWithClassNameStrict("testClass", "td th");
+
+````
+
+# HTMLElement attribute methods
+````php
+$document = new HTMLDocument();
+$document->loadFile(__DIR__ . "/assets/TableToArrayTest.html");
+
+$table = $document-getElementBy("myTable");
+
+// will return null if the attribute does not exist otherwise string
+$table->getAttributeValue("align");
+
 
 ````
